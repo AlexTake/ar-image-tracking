@@ -113,7 +113,7 @@
                 overlay.style.opacity = 0;
             }, 1000);
         }
-
+    
         // Function to mark correct answer
         function markCorrect(overlayId) {
             const overlay = document.getElementById(overlayId);
@@ -125,7 +125,7 @@
                 overlay.style.opacity = 0;
             }, 1000);
         }
-
+    
         // Function to show winning message
         function showWinMessage() {
             document.getElementById('win-message').style.display = 'flex';
@@ -133,19 +133,25 @@
                 document.getElementById('win-message').style.display = 'none';
             }, 3000);
         }
-
+    
         // Add click event listeners to overlays
         document.getElementById('overlay1').addEventListener('click', function () { markIncorrect('overlay1'); });
         document.getElementById('overlay2').addEventListener('click', function () { markIncorrect('overlay2'); });
         document.getElementById('overlay3').addEventListener('click', function () { markCorrect('overlay3'); });
         
-        // Show/hide buttons based on marker visibility
+        // Show/hide buttons based on marker visibility and disable pointer events when hidden
         const marker = document.getElementById('marker');
         marker.addEventListener('markerFound', () => {
-            document.querySelectorAll('.button').forEach(button => button.style.display = 'block');
+            document.querySelectorAll('.button').forEach(button => {
+                button.style.display = 'block';
+                button.style.pointerEvents = 'auto'; // Enable click events when shown
+            });
         });
         marker.addEventListener('markerLost', () => {
-            document.querySelectorAll('.button').forEach(button => button.style.display = 'none');
+            document.querySelectorAll('.button').forEach(button => {
+                button.style.display = 'none';
+                button.style.pointerEvents = 'none'; // Disable click events when hidden
+            });
         });
     </script>
 
