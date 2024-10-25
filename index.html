@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>ar-image-tracking</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
@@ -17,29 +15,22 @@
             margin: 0;
             background-color: #f0f0f0;
         }
-
         #button-container {
             display: flex;
             justify-content: space-around;
             width: 100%;
             position: absolute;
             bottom: 10%;
-            /* Position the buttons at the bottom */
             padding: 0 20px;
-            /* Add some horizontal padding */
         }
-
         #overlay-container {
             display: flex;
             justify-content: space-around;
             width: 100%;
             position: absolute;
             bottom: 10%;
-            /* Position the buttons at the bottom */
             padding: 0 20px;
-            /* Add some horizontal padding */
         }
-
         #win-message {
             z-index: 1;
             position: absolute;
@@ -55,7 +46,6 @@
             font-size: 3rem;
             display: none;
         }
-
         .button {
             width: 100px;
             height: 100px;
@@ -63,24 +53,11 @@
             background-repeat: no-repeat;
             cursor: pointer;
             position: relative;
-            /* Allow positioning of overlays relative to the button */
             display: none;
         }
-
-        /* Define button backgrounds */
-        #button1 {
-            background-image: url('./Images/button1.jpg');
-        }
-
-        #button2 {
-            background-image: url('./Images/button2.jpg');
-        }
-
-        #button3 {
-            background-image: url('./Images/button3.jpg');
-        }
-
-        /* Overlay images for tick and cross */
+        #button1 { background-image: url('./Images/button1.jpg'); }
+        #button2 { background-image: url('./Images/button2.jpg'); }
+        #button3 { background-image: url('./Images/button3.jpg'); }
         .overlay {
             opacity: 0;
             width: 100px;
@@ -89,28 +66,17 @@
             background-repeat: no-repeat;
             cursor: pointer;
             position: relative;
-            /* Allow positioning of overlays relative to the button */
-            /* Initially hidden */
         }
-
-        .cross {
-            background-image: url('./Images/cross.png');
-        }
-
-        .tick {
-            background-image: url('./Images/tick.png');
-        }
+        .cross { background-image: url('./Images/cross.png'); }
+        .tick { background-image: url('./Images/tick.png'); }
     </style>
 </head>
-
 <body>
 
     <!-- AR Scene -->
     <a-scene embedded arjs="debugUIEnabled: false;" vr-mode-ui="enabled: false">
         <a-marker type="pattern" url="./pattern-marker.patt" id="marker">
-            <!-- Overlay image in AR -->
-            <a-image src="./Images/overlay-image.jpg" position="0 0 0" rotation="-90 0 0" height="1"
-                width="1"></a-image>
+            <a-image src="./Images/overlay-image.jpg" position="0 0 0" rotation="-90 0 0" height="1" width="1"></a-image>
         </a-marker>
         <a-entity camera></a-entity>
     </a-scene>
@@ -133,40 +99,67 @@
     </div>
 
     <script>
-        // Определяем обработчики событий как именованные функции
+        // Function to mark incorrect answer
+        function markIncorrect(overlayId) {
+            const overlay = document.getElementById(overlayId);
+            overlay.classList.remove('tick');
+            overlay.classList.add('cross');
+            overlay.style.opacity = 1;
+            setTimeout(() => {
+                overlay.style.opacity = 0;
+            }, 1000);
+        }
+
+        // Function to mark correct answer
+        function markCorrect(overlayId) {
+            const overlay = document.getElementById(overlayId);
+            overlay.classList.remove('cross');
+            overlay.classList.add('tick');
+            overlay.style.opacity = 1;
+            showWinMessage();
+            setTimeout(() => {
+                overlay.style.opacity = 0;
+            }, 1000);
+        }
+
+        // Function to show winning message
+        function showWinMessage() {
+            document.getElementById('win-message').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('win-message').style.display = 'none';
+            }, 3000);
+        }
+
+        // Define named click event handlers for overlays
         function overlay1ClickHandler() { markIncorrect('overlay1'); }
         function overlay2ClickHandler() { markIncorrect('overlay2'); }
         function overlay3ClickHandler() { markCorrect('overlay3'); }
 
-        // Показ/скрытие кнопок и управление кликами на основе видимости маркера
+        // Show/hide buttons and toggle event listeners based on marker visibility
         const marker = document.getElementById('marker');
 
         marker.addEventListener('markerFound', () => {
-            // Добавляем обработчики кликов при обнаружении маркера
             document.getElementById('overlay1').addEventListener('click', overlay1ClickHandler);
             document.getElementById('overlay2').addEventListener('click', overlay2ClickHandler);
             document.getElementById('overlay3').addEventListener('click', overlay3ClickHandler);
 
             document.querySelectorAll('.button').forEach(button => {
                 button.style.display = 'block';
-                button.style.pointerEvents = 'auto'; // Включаем клики при отображении кнопок
+                button.style.pointerEvents = 'auto';
             });
         });
 
         marker.addEventListener('markerLost', () => {
-            // Убираем обработчики кликов при потере маркера
             document.getElementById('overlay1').removeEventListener('click', overlay1ClickHandler);
             document.getElementById('overlay2').removeEventListener('click', overlay2ClickHandler);
             document.getElementById('overlay3').removeEventListener('click', overlay3ClickHandler);
 
             document.querySelectorAll('.button').forEach(button => {
                 button.style.display = 'none';
-                button.style.pointerEvents = 'none'; // Отключаем клики при скрытии кнопок
+                button.style.pointerEvents = 'none';
             });
         });
     </script>
 
-
 </body>
-
 </html>
