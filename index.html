@@ -135,19 +135,23 @@
         }
     
         // Add click event listeners to overlays
-        document.getElementById('overlay1').addEventListener('click', function () { markIncorrect('overlay1'); });
-        document.getElementById('overlay2').addEventListener('click', function () { markIncorrect('overlay2'); });
-        document.getElementById('overlay3').addEventListener('click', function () { markCorrect('overlay3'); });
+        
         
         // Show/hide buttons based on marker visibility and disable pointer events when hidden
         const marker = document.getElementById('marker');
         marker.addEventListener('markerFound', () => {
+            document.getElementById('overlay1').addEventListener('click', function () { markIncorrect('overlay1'); });
+        document.getElementById('overlay2').addEventListener('click', function () { markIncorrect('overlay2'); });
+        document.getElementById('overlay3').addEventListener('click', function () { markCorrect('overlay3'); });
             document.querySelectorAll('.button').forEach(button => {
                 button.style.display = 'block';
                 button.style.pointerEvents = 'auto'; // Enable click events when shown
             });
         });
         marker.addEventListener('markerLost', () => {
+            document.getElementById('overlay1').removeEventListener('click', function () { markIncorrect('overlay1'); });
+        document.getElementById('overlay2').removeEventListener('click', function () { markIncorrect('overlay2'); });
+        document.getElementById('overlay3').removeEventListener('click', function () { markCorrect('overlay3'); });
             document.querySelectorAll('.button').forEach(button => {
                 button.style.display = 'none';
                 button.style.pointerEvents = 'none'; // Disable click events when hidden
