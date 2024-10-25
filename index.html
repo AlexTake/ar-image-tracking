@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Interactive Buttons</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #button-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            position: absolute;
+            bottom: 10%; /* Position the buttons at the bottom */
+            padding: 0 20px; /* Add some horizontal padding */
+        }
+        #overlay-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            position: absolute;
+            bottom: 10%; /* Position the buttons at the bottom */
+            padding: 0 20px; /* Add some horizontal padding */
+        }
+        #win-message {
+            z-index:1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 255, 0, 1);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            display: none;
+        }
+        .button {
+            width: 100px;
+            height: 100px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            position: relative; /* Allow positioning of overlays relative to the button */
+            display: none;
+        }
+        /* Define button backgrounds */
+        #button1 { background-image: url('./Images/button1.jpg'); }
+        #button2 { background-image: url('./Images/button2.jpg'); }
+        #button3 { background-image: url('./Images/button3.jpg'); }
+        /* Overlay images for tick and cross */
+        .overlay {
+            opacity: 0;
+            width: 100px;
+            height: 100px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            position: relative; /* Allow positioning of overlays relative to the button */
+            /* Initially hidden */
+        }
+        .cross { background-image: url('./Images/cross.png'); }
+        .tick { background-image: url('./Images/tick.png'); }
+    </style>
+</head>
+<body>
+
+    <!-- AR Scene -->
+    <a-scene embedded arjs>
+        <a-marker type="pattern" url="./pattern-marker.patt" id="marker">
+            <!-- Overlay image in AR -->
+            <a-image src="./Images/overlay-image.jpg" position="0 0 0" rotation="-90 0 0" height="1" width="1"></a-image>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <!-- Winning Message Overlay -->
+    <div id="win-message">You won!</div>
+
+    <!-- Interactive Buttons Container -->
+    <div id="button-container">
+        <div id="button1" class="button"></div>
+        <div id="button2" class="button"></div>
+        <div id="button3" class="button"></div>
+    </div>
+
+    <!-- Overlay Containers for Tick and Cross -->
+    <div id="overlay-container">
+        <div id="overlay1" class="overlay cross"></div>
+        <div id="overlay2" class="overlay cross"></div>
+        <div id="overlay3" class="overlay cross"></div>
+    </div>
+
+    <script>
+        // Function to mark incorrect answer
+        function markIncorrect(overlayId) {
+            const overlay = document.getElementById(overlayId);
+            overlay.classList.remove('tick');
+            overlay.classList.add('cross');
+            overlay.style.opacity = 1;
+            setTimeout(() => {
+                overlay.style.opacity = 0;
+            }, 1000);
+        }
+
+        // Function to mark correct answer
+        function markCorrect(overlayId) {
+            const overlay = document.getElementById(overlayId);
+            overlay.classList.remove('cross');
+            overlay.classList.add('tick');
+            overlay.style.opacity = 1;
+            showWinMessage();
+            setTimeout(() => {
+                overlay.style.opacity = 0;
+            }, 1000);
+        }
+
+        // Function to show winning message
+        function showWinMessage() {
+            document.getElementById('win-message').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('win-message').style.display = 'none';
+            }, 3000);
+        }
+
+        // Add click event listeners to overlays
+        document.getElementById('overlay1').addEventListener('click', function () { markIncorrect('overlay1'); });
+        document.getElementById('overlay2').addEventListener('click', function () { markIncorrect('overlay2'); });
+        document.getElementById('overlay3').addEventListener('click', function () { markCorrect('overlay3'); });
+        
+        // Show/hide buttons based on marker visibility
+        const marker = document.getElementById('marker');
+        marker.addEventListener('markerFound', () => {
+            document.querySelectorAll('.button').forEach(button => button.style.display = 'block');
+        });
+        marker.addEventListener('markerLost', () => {
+            document.querySelectorAll('.button').forEach(button => button.style.display = 'none');
+        });
+    </script>
+
+</body>
+</html>
